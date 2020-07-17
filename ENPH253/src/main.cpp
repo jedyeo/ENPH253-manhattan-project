@@ -36,7 +36,7 @@ void setup() {
   // servo pin mode
   rampServo.attach(RAMP_SERVO);
   rampServo.write(0); //default
-  delay(1500);
+  delay(3000);
 }
 
 void loop() {
@@ -58,8 +58,8 @@ void loop() {
   // stopMotor();
 
   // moveServo();
-  rampServo.write(90);
-  delay(500);
+  rampServo.write(120);
+  delay(5000);
   rampServo.write(0);
-  delay(500);
+  delay(2500);
 }
