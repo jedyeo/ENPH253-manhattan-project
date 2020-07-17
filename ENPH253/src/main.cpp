@@ -5,6 +5,13 @@
 #define RESO RESOLUTION_10B_COMPARE_FORMAT
 #define PWMFREQ 1000
 
+void stopMotor() {
+  pwm_start(MOTOR_A, PWMFREQ, 0, RESO);
+  pwm_start(MOTOR_B, PWMFREQ, 0, RESO);
+
+  delay(1000);
+}
+
 
 void setup() {
   // put your setup code here, to run once:
@@ -21,13 +28,12 @@ void loop() {
 
   delay(1000);
 
-  pwm_start(MOTOR_A, PWMFREQ, 0, RESO);
-  pwm_start(MOTOR_B, PWMFREQ, 0, RESO);
-
-  delay(1000);
+  stopMotor();
 
   pwm_start(MOTOR_A, PWMFREQ, 0, RESO);
   pwm_start(MOTOR_B, PWMFREQ, 512, RESO);
   
   delay(1000);
+
+  stopMotor();
 }
