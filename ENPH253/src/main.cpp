@@ -22,9 +22,9 @@ void stopMotor() {
 
 void testMotor() {
   // move forward
-  pwm_start(MOTOR_R1, PWMFREQ, 512, RESO); // go forward
+  pwm_start(MOTOR_R1, PWMFREQ, 1023, RESO); // go forward
   pwm_start(MOTOR_R2, PWMFREQ, 0, RESO); // do not reverse
-  pwm_start(MOTOR_L1, PWMFREQ, 512, RESO); // go forward
+  pwm_start(MOTOR_L1, PWMFREQ, 1023, RESO); // go forward
   pwm_start(MOTOR_L2, PWMFREQ, 0, RESO); // do not reverse
 
   // move forward for 2 second
@@ -36,9 +36,9 @@ void testMotor() {
 
   // move backwards
   pwm_start(MOTOR_R1, PWMFREQ, 0, RESO);
-  pwm_start(MOTOR_R2, PWMFREQ, 512, RESO); 
+  pwm_start(MOTOR_R2, PWMFREQ, 1023, RESO); 
   pwm_start(MOTOR_L1, PWMFREQ, 0, RESO); 
-  pwm_start(MOTOR_L2, PWMFREQ, 512, RESO); 
+  pwm_start(MOTOR_L2, PWMFREQ, 1023, RESO); 
   
   // move backwards for 2s
   delay(2000);
@@ -48,7 +48,7 @@ void testMotor() {
   delay(5000);
 
   // turn right
-  pwm_start(MOTOR_R1, PWMFREQ, 512, RESO);
+  pwm_start(MOTOR_R1, PWMFREQ, 1023, RESO);
   pwm_start(MOTOR_R2, PWMFREQ, 0, RESO); 
   pwm_start(MOTOR_L1, PWMFREQ, 0, RESO); 
   pwm_start(MOTOR_L2, PWMFREQ, 0, RESO); 
@@ -63,7 +63,7 @@ void testMotor() {
   // turn left
   pwm_start(MOTOR_R1, PWMFREQ, 0, RESO);
   pwm_start(MOTOR_R2, PWMFREQ, 0, RESO); 
-  pwm_start(MOTOR_L1, PWMFREQ, 512, RESO); 
+  pwm_start(MOTOR_L1, PWMFREQ, 1023, RESO); 
   pwm_start(MOTOR_L2, PWMFREQ, 0, RESO); 
 
   // turn left for 1s
@@ -71,6 +71,13 @@ void testMotor() {
 
   // chill for 2s
   stopMotor();
+  delay(2000);
+}
+
+void testServo() {
+  rampServo.write(90);
+  delay(2000);
+  rampServo.write(10);
   delay(2000);
 }
 
@@ -99,9 +106,5 @@ void setup() {
 
 void loop() {
   // Put your main code here, to run repeatedly:
-
-  rampServo.write(120);
-  delay(1000);
-  rampServo.write(10);
-  delay(1000);
+  testMotor();
 }
