@@ -74,6 +74,17 @@ void simpleTest() {
   delay(10000);
 }
 
+void dance() {
+  moveForward(500);
+  delay(500);
+  moveBackwards(500);
+  delay(500);
+  turnRight(500);
+  delay(500);
+  turnLeft(500);
+  delay(500);
+}
+
 void setup() {
   // put your setup code here, to run once:
 
@@ -97,12 +108,5 @@ void setup() {
 void loop() {
   //simpleTest();
 
-  moveForward(500);
-  delay(500);
-  moveBackwards(500);
-  delay(500);
-  turnRight(1000);
-  delay(500);
-  turnLeft(1000);
-  delay(500);
+  
 }
