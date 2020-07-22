@@ -57,6 +57,23 @@ void turnLeft(int time) {
   stopMotor();
 }
 
+void depositCan() {
+  rampServo.write(60);
+}
+
+void retractRamp() {
+  rampServo.write(180);
+}
+
+void simpleTest() {
+  moveForward(750);
+  depositCan();
+
+  delay(1000);
+  retractRamp();
+  delay(10000);
+}
+
 void setup() {
   // put your setup code here, to run once:
 
@@ -71,28 +88,10 @@ void setup() {
 
   // servo pin mode
   rampServo.attach(RAMP_SERVO);
-  rampServo.write(180); //default ramp pos
+  retractRamp();
 
   // wait 5s to gather your thoughts and pray to andre
   delay(5000);
-}
-
-void simpleTest() {
-  // move forward
-  pwm_start(MOTOR_R1, PWMFREQ, 1023, RESO); // go forward
-  pwm_start(MOTOR_R2, PWMFREQ, 0, RESO); // do not reverse
-  pwm_start(MOTOR_L1, PWMFREQ, 1023, RESO); // go forward
-  pwm_start(MOTOR_L2, PWMFREQ, 0, RESO); // do not reverse
-  delay(750);
-
-  rampServo.write(60);
-  delay(250);
-
-  stopMotor();
-
-  delay(1000);
-  rampServo.write(180);
-  delay(10000);
 }
 
 void loop() {
