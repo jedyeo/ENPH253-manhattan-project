@@ -95,6 +95,7 @@ void simpleTest() {
 void setup() {
     // begin serial comms for debugging
     Serial1.begin(9600);
+    Serial1.println("setup");
 
     // single motor pin modes
     pinMode(MOTOR_R1, OUTPUT);
@@ -114,8 +115,8 @@ void setup() {
 }
 
 void loop() {
-    // simpleTest();
-    // dance();
+    Serial1.println("simple test");
+    simpleTest();
 
     Serial1.println(ultrasonic.distanceRead());
     delay(250);
