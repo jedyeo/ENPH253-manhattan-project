@@ -10,10 +10,6 @@
 #define MOTOR_L1 PB_6 // forward
 #define MOTOR_L2 PB_7 // rev
 
-#define SCREEN_WIDTH 128
-#define SCREEN_HEIGHT 64
-#define OLED_RESET -1
-
 #define RESO RESOLUTION_10B_COMPARE_FORMAT
 #define PWMFREQ 1000
 
@@ -98,21 +94,23 @@ void takeMeasurement(int i) {
 }
 
 void sweepLeft() {
-    for (int i = 0; i < 20; i++) {
-        turnLeft(767, 150);
+    for (int i = 0; i < 10; i++) {
+        turnLeft(900, 150);
         takeMeasurement(i);
+     //   delayMicroseconds(50);
     }
 
     int myMin = 10000;
     int myMinIndex = -1;
 
-    for (int j = 0; j < 20; j++) {
+    for (int j = 0; j < 10; j++) {
         if (dists[j] < myMin) {
+            myMin = dists[j];
             myMinIndex = j;
         }
     }
 
-    turnRight(650, (myMinIndex+1) * 150);
+    turnRight(950, (10-myMinIndex+1) * 150);
 }
 
 void collectCan() { 
