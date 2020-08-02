@@ -72,7 +72,7 @@ void dance() {
 }
 
 void depositCan() {
-    rampServo.write(60);
+    rampServo.write(20);
 }
 
 void retractRamp() {
@@ -90,27 +90,33 @@ void simpleTest() {
 
 void takeMeasurement(int i) {
     int dist_cm = ultrasonic.distanceRead();
+    Serial1.println(dist_cm);
     dists[i] = dist_cm;
 }
 
 void sweepLeft() {
-    for (int i = 0; i < 10; i++) {
-        turnLeft(900, 150);
+    for (int i = 0; i < 5; i++) {
         takeMeasurement(i);
-     //   delayMicroseconds(50);
+        turnLeft(850, 150);
+        delay(250);
+    // i++
     }
-
     int myMin = 10000;
     int myMinIndex = -1;
 
-    for (int j = 0; j < 10; j++) {
+    for (int j = 0; j < 5; j++) {
         if (dists[j] < myMin) {
             myMin = dists[j];
             myMinIndex = j;
         }
     }
+    delay(1000);
 
-    turnRight(950, (10-myMinIndex+1) * 150);
+   // turnRight(900, (5-myMinIndex+1) * 150);
+    for (int j = 5-myMinIndex; j > 0; j--) {
+        delay(250);
+        turnRight(825, 150);
+    }
 }
 
 void collectCan() { 
@@ -122,9 +128,9 @@ void collectCan() {
         distToCan = ultrasonic.distanceRead();
     }
 
-    moveForward(900, 750);
+    moveForward(1023, 500);
     depositCan();
-    delay(500);
+    delay(1000);
     retractRamp();
 }
 
@@ -152,9 +158,20 @@ void setup() {
 
 void loop() {
     Serial1.println("beginning of loop");
+    moveBackwards(850, 200);
+    // delay(500);
     
     sweepLeft();
     delay(250);
     collectCan();
     delay(3000);
+
+    // moveForward(950, 800);
+    // delay(250);
+    // turnRight(950, 750);
+    // delay(250);
+    // collectCan();
+    // delay(250);
+    // turnRight(950, 750);
+    // delay(250);
 }
