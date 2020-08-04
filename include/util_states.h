@@ -10,7 +10,7 @@ typedef enum {
     STATE_SWEEP,
     STATE_DEPOSIT,
     STATE_REPOSITION,
-
+    STATE_TAPE_DETECTED,
 } State_t;
 
 volatile uint32_t state = STATE_INIT;

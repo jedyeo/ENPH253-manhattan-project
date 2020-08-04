@@ -6,6 +6,8 @@
 #include "util_states.h"
 
 #define NUM_SEARCH 10
+#define DIST_BUFFER 2
+#define THRESHOLD 500
 
 Servo rampServo;
 Ultrasonic ultrasonic(TRIG, ECHO);
@@ -25,10 +27,22 @@ void takeMeasurement(int i) {
     dists[i] = dist_cm;
 }
 
-void search() {
+bool tapeDetected() {
+    if (analogRead(PB0) >= THRESHOLD) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool search() {
     for (int i = 0; i < NUM_SEARCH; i++) {
+        if (tapeDetected()) { 
+            return false;
+        }
         takeMeasurement(i);
-        turnLeft(850, 150);
+        turnLeft(900, 150);
+        delay(20);
     }
 
     int minDist = 10000;
@@ -39,24 +53,34 @@ void search() {
         }
     }
 
-    for (int k = 0; k < 20; k++) {
-        if (ultrasonic.read() <= minDist) {
-            break;
+    while (true) {
+        if (tapeDetected()) { 
+            return false;
         }
-        turnRight(850, 100);
+        if (ultrasonic.read() <= minDist) {
+            return true;
+        } else {
+            turnRight(900, 150);
+            delay(20);
+        }
     }
 }
 
-void approach() {
+bool approach() {
     int distToCan = ultrasonic.read();
 
     // CAUTION: the shortest distance could indeed have been a wall,
     // this is where you need to especially check for tape
 
     while(distToCan > 15) {
+        if (tapeDetected()) { 
+            return false;
+        }
         moveForward(950, 50);
         distToCan = ultrasonic.read();
     }
+
+    return true;
 }
 
 void sweep() {
@@ -70,7 +94,7 @@ void deposit() {
 }
 
 void reposition() {
-    turnRight(900, 1000);
+    turnRight(900, 1250);
 }
 
 void setup() {
@@ -123,13 +147,19 @@ void loop() {
     }
 
     if (state == STATE_SEARCH) {
-        search();
-        state = STATE_APPROACH;
+        if (search()) {
+            state = STATE_APPROACH;
+        } else {
+            state = STATE_TAPE_DETECTED;
+        }
     }
 
     if (state == STATE_APPROACH) {
-        approach();
-        state = STATE_SWEEP;
+        if (approach()) {
+            state = STATE_SWEEP;
+        } else {
+            state = STATE_TAPE_DETECTED;
+        }
     }
     
     if (state == STATE_SWEEP) {
@@ -144,6 +174,11 @@ void loop() {
 
     if (state == STATE_REPOSITION) {
         reposition();
+        state = STATE_SEARCH;
+    }
+
+    if (state == STATE_TAPE_DETECTED) {
+        turnRight(900, 1000);
         state = STATE_SEARCH;
     }
 }
