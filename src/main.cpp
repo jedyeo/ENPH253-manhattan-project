@@ -28,7 +28,7 @@ void takeMeasurement(int i) {
 }
 
 bool tapeDetected() {
-    if (analogRead(PB0) >= THRESHOLD) {
+    if (analogRead(TAPE_SENSOR) >= THRESHOLD) {
         return true;
     } else {
         return false;
@@ -68,10 +68,7 @@ bool search() {
 
 bool approach() {
     int distToCan = ultrasonic.read();
-
-    // CAUTION: the shortest distance could indeed have been a wall,
-    // this is where you need to especially check for tape
-
+    
     while(distToCan > 15) {
         if (tapeDetected()) { 
             return false;
@@ -116,11 +113,10 @@ void setup() {
     retractRamp();
 
     // Tape sensor
-    pinMode(PB0, INPUT);
+    pinMode(TAPE_SENSOR, INPUT);
 
     Serial1.println("waiting for button press");
 
-    // pressing PA4 starts the loop
     while (true) {
         if (digitalRead(PA4)) {
             Serial1.println("we're done waiting!");
@@ -133,16 +129,9 @@ void setup() {
 }
 
 void loop() {
-    /* time trial test sequence */
-    // moveBackwards(850, 200);
-    
-    // sweepLeft();
-    // delay(250);
-    // collectCan();
-    // delay(3000);
 
     if (state == STATE_INIT) {
-        moveBackwards(850, 200); // pick up bin
+        moveBackwards(850, 200);
         state = STATE_SEARCH;
     }
 
