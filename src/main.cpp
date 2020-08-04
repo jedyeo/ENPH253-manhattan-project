@@ -4,22 +4,15 @@
 #include "pin_define.h"
 #include "util_motor.h"
 #include "util_states.h"
+#include "util_servo.h"
 
 #define NUM_SEARCH 10
 #define DIST_BUFFER 2
 #define THRESHOLD 500
 
-Servo rampServo;
 Ultrasonic ultrasonic(TRIG, ECHO);
 int dists[20];
 
-void depositCan() {
-    rampServo.write(20);
-}
-
-void retractRamp() {
-    rampServo.write(180);
-}
 
 void takeMeasurement(int i) {
     int dist_cm = ultrasonic.read();
@@ -68,7 +61,7 @@ bool search() {
 
 bool approach() {
     int distToCan = ultrasonic.read();
-    
+
     while(distToCan > 15) {
         if (tapeDetected()) { 
             return false;
