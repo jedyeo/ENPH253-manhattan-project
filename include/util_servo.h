@@ -3,5 +3,8 @@
 
 void depositCan();
 void retractRamp();
+void initServo();
+void extendSweeper();
+void sweepCan();
 
 #endif

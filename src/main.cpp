@@ -6,7 +6,7 @@
 #include "util_states.h"
 #include "util_servo.h"
 
-#define NUM_SEARCH 10
+#define NUM_SEARCH 15
 #define DIST_BUFFER 2
 #define THRESHOLD 500
 
@@ -21,6 +21,9 @@ void takeMeasurement(int i) {
 }
 
 bool tapeDetected() {
+    Serial1.println("tape deteced:");
+    Serial1.println(analogRead(TAPE_SENSOR));
+
     if (analogRead(TAPE_SENSOR) >= THRESHOLD) {
         return true;
     } else {
@@ -29,13 +32,15 @@ bool tapeDetected() {
 }
 
 bool search() {
+    int search_count = 0;
+
     for (int i = 0; i < NUM_SEARCH; i++) {
         if (tapeDetected()) { 
             return false;
         }
         takeMeasurement(i);
-        turnLeft(900, 150);
-        delay(20);
+        turnLeft(900, 75);
+        delay(10);
     }
 
     int minDist = 10000;
@@ -46,45 +51,77 @@ bool search() {
         }
     }
 
-    while (true) {
+    while (search_count < 1500) {
         if (tapeDetected()) { 
             return false;
         }
         if (ultrasonic.read() <= minDist) {
+            moveBackwards(1023, 100);
             return true;
         } else {
-            turnRight(900, 150);
-            delay(20);
+            turnRight(900, 100);
+            delay(10);
         }
+        search_count += 100;
     }
+
+    return false;
 }
 
 bool approach() {
     int distToCan = ultrasonic.read();
 
-    while(distToCan > 15) {
+    while (distToCan > 14) {
         if (tapeDetected()) { 
             return false;
         }
-        moveForward(950, 50);
+        moveForward(1023, 50);
         distToCan = ultrasonic.read();
     }
 
+    moveForward(1023, 250);
     return true;
 }
 
 void sweep() {
-    // nothing here yet
+    // extendSweeper();
+    // delay(500);
+    // sweepCan();
+    // delay(500);
+    // extendSweeper();
 }
 
 void deposit() {
+    turnLeft(900,75);
     depositCan();
     delay(1000);
     retractRamp();
 }
 
 void reposition() {
-    turnRight(900, 1250);
+    turnRight(900, 1000);
+}
+
+void entertain() {
+    while (true) {
+        moveForward(1023, 300);
+        depositCan();
+        delay(250);
+        moveBackwards(1023, 300);
+        retractRamp();
+        delay(250);
+        turnLeft(1023, 750);
+        depositCan();
+        delay(250);
+        turnRight(1023, 750);
+        retractRamp();
+        delay(500);
+        depositCan();
+        turnRight(1023, 750);
+        delay(500);
+        retractRamp();
+        delay(500);
+    }
 }
 
 void setup() {
@@ -101,20 +138,30 @@ void setup() {
     // start at zero duty cycle
     stopMotor();
     
-    // servo pin mode
-    rampServo.attach(RAMP_SERVO);
-    retractRamp();
+    // Servo init
+    initServo();
+    extendSweeper();
 
     // Tape sensor
     pinMode(TAPE_SENSOR, INPUT);
 
     Serial1.println("waiting for button press");
 
+    // pin mode buttons
+    pinMode(PA4, INPUT_PULLDOWN);
+    pinMode(PB3, INPUT_PULLDOWN);
+
     while (true) {
         if (digitalRead(PA4)) {
+            Serial1.println("do robot stuff");
             Serial1.println("we're done waiting!");
             state = STATE_INIT; 
             break;
+        }
+
+        if (digitalRead(PB3)) {
+            Serial1.println("give em a show");
+            entertain();
         }
     }
 
@@ -122,9 +169,9 @@ void setup() {
 }
 
 void loop() {
-
+#if 1
     if (state == STATE_INIT) {
-        moveBackwards(850, 200);
+        moveBackwards(850, 600);
         state = STATE_SEARCH;
     }
 
@@ -155,12 +202,24 @@ void loop() {
     }
 
     if (state == STATE_REPOSITION) {
+        moveBackwards(900, 750);
         reposition();
         state = STATE_SEARCH;
     }
 
     if (state == STATE_TAPE_DETECTED) {
-        turnRight(900, 1000);
+        delay(500);
+        moveBackwards(900,1000);
+        turnLeft(1023, 350);
         state = STATE_SEARCH;
     }
+#endif
+ //   Serial1.println("LOOP TAPE:");
+   // Serial1.println(analogRead(TAPE_SENSOR));
+    // Serial1.println("Sweeping");
+    // extendSweeper();
+    // delay(500);
+    // sweepCan();
+    // delay(500);
+
 }

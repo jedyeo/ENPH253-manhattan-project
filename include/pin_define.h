@@ -4,6 +4,7 @@
 #define TRIG PA0 // orange
 #define ECHO PA1 // green
 #define RAMP_SERVO PA2 
+#define SWEEP_SERVO PA6
 #define TAPE_SENSOR PB0
 
 #define MOTOR_R1 PB_8 // forward
